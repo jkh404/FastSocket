@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastSocket", "FastSocket\FastSocket.csproj", "{4E9D5949-9029-405C-9A6D-40D39E11A49D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestClient", "TestClient\TestClient.csproj", "{7337F266-FE6E-487F-8E91-AA84CB6A7217}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestServer", "TestServer\TestServer.csproj", "{41F49E5B-9C94-41BE-BC34-DA15C968D795}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4E9D5949-9029-405C-9A6D-40D39E11A49D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E9D5949-9029-405C-9A6D-40D39E11A49D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E9D5949-9029-405C-9A6D-40D39E11A49D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E9D5949-9029-405C-9A6D-40D39E11A49D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7337F266-FE6E-487F-8E91-AA84CB6A7217}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7337F266-FE6E-487F-8E91-AA84CB6A7217}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7337F266-FE6E-487F-8E91-AA84CB6A7217}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7337F266-FE6E-487F-8E91-AA84CB6A7217}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41F49E5B-9C94-41BE-BC34-DA15C968D795}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41F49E5B-9C94-41BE-BC34-DA15C968D795}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41F49E5B-9C94-41BE-BC34-DA15C968D795}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41F49E5B-9C94-41BE-BC34-DA15C968D795}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
