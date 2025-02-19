@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace FastSocket
 {
@@ -29,33 +30,34 @@ namespace FastSocket
 
         private void ThreadFunc(object? obj)
         {
-            Thread.Sleep(_dueTime);
-            var _tempPeriod=_period/10;
-            while (_isStart) 
-            {
-                try
-                {
-                    _timerCallback?.Invoke(obj);
-                }
-                catch (Exception)
-                {
 
-                }
-                lastTime=DateTime.UtcNow;
-                for (int i = 0; i < 10; i++)
-                {
-                    Thread.Sleep(_tempPeriod);
-                    if (i==9) continue;
-                    var timeSpan=DateTime.UtcNow - lastTime;
-                    int tick = (int)(_period-timeSpan.TotalMilliseconds);
-                    if (tick<0) break;
-                    if (tick<_tempPeriod)
-                    {
-                        Thread.Sleep(tick);
-                        break;
-                    }
-                }
-            }
+            //Thread.Sleep(_dueTime);
+            //var _tempPeriod=_period/10;
+            //while (_isStart) 
+            //{
+            //    try
+            //    {
+            //        _timerCallback?.Invoke(obj);
+            //    }
+            //    catch (Exception)
+            //    {
+
+            //    }
+            //    lastTime=DateTime.UtcNow;
+            //    for (int i = 0; i < 10; i++)
+            //    {
+            //        Thread.Sleep(_tempPeriod);
+            //        if (i==9) continue;
+            //        var timeSpan=DateTime.UtcNow - lastTime;
+            //        int tick = (int)(_period-timeSpan.TotalMilliseconds);
+            //        if (tick<0) break;
+            //        if (tick<_tempPeriod)
+            //        {
+            //            Thread.Sleep(tick);
+            //            break;
+            //        }
+            //    }
+            //}
         }
 
         public void Start() 
@@ -74,6 +76,7 @@ namespace FastSocket
             lock (_lockObj)
             {
                 _isStart=false;
+
             }
         }
     }

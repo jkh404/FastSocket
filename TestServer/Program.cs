@@ -6,52 +6,52 @@ using MemoryPack;
 
 
 
-FastTcpServer fastTcpServer = new FastTcpServer(new System.Net.IPEndPoint(System.Net.IPAddress.Any, 9090));
-fastTcpServer.OnCheckClient=(IBaseTcpClient self) => true;
-fastTcpServer.OnTcpClientEnter=(ITcpChannel c) =>
-{
-    //c.OnReceive=static (IBaseTcpChannel self, PackageDataType dataType, ReadOnlySpan<byte> dataPacketData) => {
-    //    if (dataType==PackageDataType.ChunkDataHead)
-    //    {
-    //        var head=dataPacketData.ToChunkDataHead();
-    //        if (head!=null)
-    //        {
-    //            self.AwaitChunk(head, initAction: (chunkData) => {
-    //                chunkData.SetStream(File.OpenWrite($"./{head.Name}"));
-    //                Console.WriteLine($"开始接收 {head.Name}");
-    //            }, appendAction: (result) =>
-    //            {
-    //                Console.WriteLine($"接收到字节：{result.ThisTimeReceivedByte},剩余字节：{result.WaitReceivedByte}");
-    //            }, completedAction: (stream) =>
-    //            {
-    //                Console.WriteLine($"{head.Name} 接收完毕");
-    //            });
-    //        }
-    //    }else if (dataType==PackageDataType.ChunkDataBody)
-    //    {
-    //        var body=dataPacketData.ToChunkDataBody();
-    //        self.AppendChunk(body);
-    //    }
+//FastTcpServer fastTcpServer = new FastTcpServer(new System.Net.IPEndPoint(System.Net.IPAddress.Any, 9090));
+//fastTcpServer.OnCheckClient=(IBaseTcpClient self) => true;
+//fastTcpServer.OnTcpClientEnter=(ITcpChannel c) =>
+//{
+//    //c.OnReceive=static (IBaseTcpChannel self, PackageDataType dataType, ReadOnlySpan<byte> dataPacketData) => {
+//    //    if (dataType==PackageDataType.ChunkDataHead)
+//    //    {
+//    //        var head=dataPacketData.ToChunkDataHead();
+//    //        if (head!=null)
+//    //        {
+//    //            self.AwaitChunk(head, initAction: (chunkData) => {
+//    //                chunkData.SetStream(File.OpenWrite($"./{head.Name}"));
+//    //                Console.WriteLine($"开始接收 {head.Name}");
+//    //            }, appendAction: (result) =>
+//    //            {
+//    //                Console.WriteLine($"接收到字节：{result.ThisTimeReceivedByte},剩余字节：{result.WaitReceivedByte}");
+//    //            }, completedAction: (stream) =>
+//    //            {
+//    //                Console.WriteLine($"{head.Name} 接收完毕");
+//    //            });
+//    //        }
+//    //    }else if (dataType==PackageDataType.ChunkDataBody)
+//    //    {
+//    //        var body=dataPacketData.ToChunkDataBody();
+//    //        self.AppendChunk(body);
+//    //    }
 
 
-    //};
-    //c.OnLeave=(IBaseTcpChannel self, PackageDataType dataType, ReadOnlySpan<byte> dataPacketData) =>
-    //{
-    //    self.ClearChunk();
-    //};
-    c.StartReceive();
-    const string fileName = "test2.png";
-    using Stream stream = File.OpenRead($"./{fileName}");
-    for (int i = 0; i < 10; i++)
-    {
-        stream.Seek(0, SeekOrigin.Begin);
-        c.SendChunk(stream, fileName, oneChunkSize: 1024);
-    }
-    c.ClearChunk();
-};
+//    //};
+//    //c.OnLeave=(IBaseTcpChannel self, PackageDataType dataType, ReadOnlySpan<byte> dataPacketData) =>
+//    //{
+//    //    self.ClearChunk();
+//    //};
+//    c.StartReceive();
+//    const string fileName = "test2.png";
+//    using Stream stream = File.OpenRead($"./{fileName}");
+//    for (int i = 0; i < 10; i++)
+//    {
+//        stream.Seek(0, SeekOrigin.Begin);
+//        c.SendChunk(stream, fileName, oneChunkSize: 1024);
+//    }
+//    c.ClearChunk();
+//};
 
-fastTcpServer.Start();
-fastTcpServer.WaitStop();
+//fastTcpServer.Start();
+//fastTcpServer.WaitStop();
 
 
 
@@ -70,72 +70,66 @@ fastTcpServer.WaitStop();
 
 
 /********************************测速代码***********************************************************/
-//ConcurrentBag<double> byteLengths = new ConcurrentBag<double>();
-//StringBuilder stringBuilder = new StringBuilder();
-//for (int i = 0; i < 1*1024; i++)
-//{
-//    stringBuilder.Append($"{i%10}");
-//}
-//string msgText = stringBuilder.ToString();
-//byte[] msgData = Encoding.UTF8.GetBytes(msgText);
+ConcurrentBag<double> byteLengths = new ConcurrentBag<double>();
+StringBuilder stringBuilder = new StringBuilder();
+for (int i = 0; i < 1 * 1024; i++)
+{
+    stringBuilder.Append($"{i % 10}");
+}
+string msgText = stringBuilder.ToString();
+byte[] msgData = Encoding.UTF8.GetBytes(msgText);
 
-//FastTcpServer fastTcpServer = new FastTcpServer(new System.Net.IPEndPoint(System.Net.IPAddress.Any,9090));
-//fastTcpServer.OnTcpClientEnter=(ITcpChannel client) =>
-//{
-//    client.StartReceive(asyncReceive: false);
-//    Console.WriteLine($"客户端进入:{client.ChannelFlag}");
-//    return true;
-//};
-//fastTcpServer.OnTcpClientLeave=(IBaseTcpChannel client, PackageDataType dataType, ReadOnlySpan<byte> data) =>
-//{
-//    Console.WriteLine($"客户端离开:{client.ChannelFlag}");
-//};
-//fastTcpServer.OnServerReceive=(IBaseTcpChannel client, PackageDataType dataType, ReadOnlySpan<byte> data) =>
-//{
-//    if (dataType==PackageDataType.PackageBody)
-//    {
-//        var text=MemoryPackSerializer.Deserialize<PackageBody>(data).ToObj<string>();
-//        byteLengths.Add((text?.Length??0)*2/1024);
-//    }
-//    //byteLengths.Add(data.Length/1024);
-//    //Console.WriteLine($"客户端离开:{client.ChannelFlag}");
-//};
-//fastTcpServer.Start(asyncReceive: true);
-//Task.Run(async () =>
-//{
+FastTcpServer fastTcpServer = new FastTcpServer(new System.Net.IPEndPoint(System.Net.IPAddress.Any, 9090));
+fastTcpServer.OnTcpClientEnter = (ITcpChannel client) =>
+{
+    client.StartReceive(asyncReceive: false);
+    Console.WriteLine($"客户端进入:{client.ChannelFlag}");
+    
+};
+fastTcpServer.OnTcpClientLeave = (IBaseTcpChannel client, PackageDataType dataType, ReadOnlySpan<byte> data) =>
+{
+    Console.WriteLine($"客户端离开:{client.ChannelFlag}");
+};
+fastTcpServer.OnServerReceive = (IBaseTcpChannel client, PackageDataType dataType, ReadOnlySpan<byte> data) =>
+{
+    if (dataType == PackageDataType.PackageBody)
+    {
+        var text = MemoryPackSerializer.Deserialize<PackageBody>(data).ToObj<string>();
+        byteLengths.Add((text?.Length ?? 0) * 2 / 1024);
+    }
+    //byteLengths.Add(data.Length/1024);
+    //Console.WriteLine($"客户端离开:{client.ChannelFlag}");
+};
+fastTcpServer.Start(asyncReceive: true);
+Task.Run(async () =>
+{
 
-//    while (true)
-//    {
-//        await fastTcpServer.SendAsync(msgData,0, msgData.Length);
-//        Thread.Sleep(100);
-//    }
-//});
+    while (true)
+    {
+        await fastTcpServer.SendAsync(msgData, 0, msgData.Length);
+        Thread.Sleep(100);
+    }
+});
 
-//Task.Run(() =>
-//{
-//    DateTime dateTime = DateTime.Now;
-//    while (true)
-//    {
-//        while ((DateTime.Now-dateTime).TotalMilliseconds<990)
-//        {
-//            Thread.Sleep(100);
-//        }
-//        var speed = byteLengths.Sum()/1204/(DateTime.Now-dateTime).TotalSeconds;
-//        byteLengths.Clear();
-//        dateTime = DateTime.Now;
-//        Console.WriteLine($"速度：{speed:N2} MB/s");
-//    }
-//});
+Task.Run(() =>
+{
+    DateTime dateTime = DateTime.Now;
+    while (true)
+    {
+        while ((DateTime.Now - dateTime).TotalMilliseconds < 990)
+        {
+            Thread.Sleep(100);
+        }
+        var speed = byteLengths.Sum() / 1204 / (DateTime.Now - dateTime).TotalSeconds;
+        byteLengths.Clear();
+        dateTime = DateTime.Now;
+        Console.WriteLine($"速度：{speed:N2} MB/s");
+    }
+});
 
-////new SingleThreadTimer((obj) =>
-////{
-////    var speed=byteLengths.Sum()/1204;
-////    byteLengths.Clear();
-////    Console.WriteLine($"速度：{speed:N2} MB/s");
-////},1000,1000).Start();
 
-//Console.ReadLine();
-//fastTcpServer.Stop();
+Console.ReadLine();
+fastTcpServer.Stop();
 /*******************************************************************************************/
 
 
