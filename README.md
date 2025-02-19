@@ -3,7 +3,7 @@
 FastSocket is a communication library based on Tcp and Udp for networking. As its name suggests, it aims to be extremely fast, stable, and easy to use. Note: If you are looking for a pure Socket library, please use `System.Net.Sockets` instead of `FastSocket`.
 ### Installation
 ```
-dotnet add package FastSocket
+dotnet add package Sky.FastSocket
 ```
 ### Tcp Server
 ```
