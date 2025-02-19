@@ -14,10 +14,10 @@ namespace FastSocket
         private readonly object? _callObjArg;
         private int _dueTime;
         private int _period;
+        private CancellationTokenSource _cancellationTokenSource;
         private bool _isStart;
         private object _lockObj=new object();
 
-        private DateTime lastTime; 
 
         public SingleThreadTimer(TimerCallback timerCallback, int dueTime, int period, object? callObjArg=null)
         {
@@ -25,39 +25,17 @@ namespace FastSocket
             _callObjArg=callObjArg;
             _dueTime=dueTime;
             _period=period;
-            
+            _cancellationTokenSource=new CancellationTokenSource();
         }
 
         private void ThreadFunc(object? obj)
         {
-
-            //Thread.Sleep(_dueTime);
-            //var _tempPeriod=_period/10;
-            //while (_isStart) 
-            //{
-            //    try
-            //    {
-            //        _timerCallback?.Invoke(obj);
-            //    }
-            //    catch (Exception)
-            //    {
-
-            //    }
-            //    lastTime=DateTime.UtcNow;
-            //    for (int i = 0; i < 10; i++)
-            //    {
-            //        Thread.Sleep(_tempPeriod);
-            //        if (i==9) continue;
-            //        var timeSpan=DateTime.UtcNow - lastTime;
-            //        int tick = (int)(_period-timeSpan.TotalMilliseconds);
-            //        if (tick<0) break;
-            //        if (tick<_tempPeriod)
-            //        {
-            //            Thread.Sleep(tick);
-            //            break;
-            //        }
-            //    }
-            //}
+            Task.Delay(_dueTime, _cancellationTokenSource.Token).Wait();
+            while (_isStart && !_cancellationTokenSource.Token.IsCancellationRequested && _timerCallback!=null)
+            {
+                _timerCallback?.Invoke(obj);
+                Task.Delay(_period, _cancellationTokenSource.Token).Wait();
+            }
         }
 
         public void Start() 
@@ -76,7 +54,7 @@ namespace FastSocket
             lock (_lockObj)
             {
                 _isStart=false;
-
+                _cancellationTokenSource.Cancel();
             }
         }
     }

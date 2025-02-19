@@ -7,6 +7,7 @@ namespace FastSocket.Tcp
     {
         public delegate void ReceiveEventHandler(IBaseTcpClient self,PackageDataType dataType, ReadOnlySpan<byte> dataPacketData);
         public delegate void ServerStopEventHandler(IBaseTcpClient self, PackageDataType dataType, ReadOnlySpan<byte> dataPacketData);
+        public delegate void ConnectedEventHandler();
         public ReceiveEventHandler? OnReceive {  get; set; }
         public ServerStopEventHandler? OnServerStop {  get; set; }
     }

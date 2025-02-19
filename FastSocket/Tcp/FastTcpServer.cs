@@ -102,7 +102,7 @@ namespace FastSocket.Tcp
                         try
                         {
                             
-                            Span<byte> buffer = stackalloc byte[FastSocketGlobalConfiguration.PackageHeadSize];
+                            Span<byte> buffer = new byte[FastSocketGlobalConfiguration.PackageHeadSize];
                             client.Client.ReceiveALL(buffer);
                             var head = PackageHeadUtil.ToPackageHead(buffer);
                             if (head.FastSocketFlag==FastSocketGlobalConfiguration.FastSocketFlag && head.TypeFlag==PackageHeadType.Hello)
@@ -157,8 +157,7 @@ namespace FastSocket.Tcp
                         }
                         catch (Exception ex)
                         {
-                            //Console.WriteLine(ex.ToString());
-                            
+                            Console.WriteLine(ex);
                             client?.Close();
                             client?.Dispose();
                             tcpChannel?.Dispose();

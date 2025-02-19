@@ -1,14 +1,42 @@
 ﻿using System.Collections.Concurrent;
+using System.ComponentModel.DataAnnotations;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
+using FastSocket;
 using FastSocket.Tcp;
 using FastSocket.Tcp.Package;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
-
-
-
+FastTcpClient client = new FastTcpClient();
+client.OnReceive=(self, dataType, data) =>//接收到数据
+{
+    if (dataType==PackageDataType.String)
+    {
+        var msg=Encoding.UTF8.GetString(data);
+        Console.WriteLine($"[S:{msg}]");
+    }
+    
+};
+client.OnConnected=() => Console.WriteLine("[连接成功]");
+client.Connect("localhost",9090);
+string msg;
+while (!string.IsNullOrEmpty(msg = Console.ReadLine()))
+{
+    client.Send(msg);
+}
 return;
+
+
+
+//SingleThreadTimer threadTimer = new SingleThreadTimer((state) =>
+//{
+//    Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff}");
+//},100,1000);
+//threadTimer.Start();
+//Console.ReadLine();
+//threadTimer.Stop();
+//return;
 FastTcpClient fastTcpClient = new FastTcpClient();
 
 fastTcpClient.OnReceive=(IBaseTcpClient self, PackageDataType dataType, ReadOnlySpan<byte> dataPacketData) =>

@@ -13,6 +13,7 @@ namespace FastSocket.Tcp
     {
         private IClientEventHandler.ReceiveEventHandler? m_OnReceive;
         private IClientEventHandler.ServerStopEventHandler? m_OnServerStop;
+        private IClientEventHandler.ConnectedEventHandler? m_OnConnected;
         public IClientEventHandler.ReceiveEventHandler? OnReceive { get => m_OnReceive; set {
                 if (m_isStartReceive) throw new InvalidOperationException("TcpClient is Start");
                 else m_OnReceive=value;
@@ -20,6 +21,11 @@ namespace FastSocket.Tcp
         public IClientEventHandler.ServerStopEventHandler? OnServerStop { get => m_OnServerStop; set {
                 if (m_isStartReceive) throw new InvalidOperationException("TcpClient is Start");
                 else m_OnServerStop=value;
+            }
+        }
+        public IClientEventHandler.ConnectedEventHandler? OnConnected{ get => m_OnConnected; set {
+                if (m_isStartReceive) throw new InvalidOperationException("TcpClient is Start");
+                else m_OnConnected=value;
             }
         }
         private readonly TcpClient m_tcpClient;
@@ -80,6 +86,10 @@ namespace FastSocket.Tcp
                         m_isStartReceive=false;
                         return m_isStartReceive;
                     }
+                    else
+                    {
+                        m_OnConnected?.Invoke();
+                    }
                 }
             }
             if (m_isStartReceive)
@@ -87,7 +97,7 @@ namespace FastSocket.Tcp
 
                 var receiveThread = new Thread(() =>
                 {
-                    Span<byte> buffer = stackalloc byte[FastSocketGlobalConfiguration.PackageHeadSize];
+                    Span<byte> buffer = new byte[FastSocketGlobalConfiguration.PackageHeadSize];
                     while (m_isStartReceive && m_tcpClient.Client.Connected)
                     {
                         try
@@ -123,6 +133,8 @@ namespace FastSocket.Tcp
                         }
                         catch (Exception ex)
                         {
+                            //m_OnServerStop?.Invoke(this, PackageDataType.Unknown, null);
+                            Console.WriteLine(ex);
                             DisconnectNoSayBye();
                         }
 
@@ -167,7 +179,7 @@ namespace FastSocket.Tcp
             lock (m_lockStartReceive)
             {
                 m_isStartReceive=false;
-
+                
             }
             m_tcpClient?.Close();
             m_tcpClient?.Dispose();
