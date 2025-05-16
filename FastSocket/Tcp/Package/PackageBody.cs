@@ -12,7 +12,7 @@ namespace FastSocket.Tcp
 
         public T? ToObj<T>()
         {
-            if (typeof(T)==Type.GetType(TypeFullNname))
+            if (typeof(T).FullName== TypeFullNname)
             {
                 
                 return MemoryPackSerializer.Deserialize<T>(Data);

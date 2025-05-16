@@ -29,7 +29,7 @@ namespace FastSocket.Udp
             udpClient.Send(data, iPEndPoint);
             return udpClient;
         }
-        public static T ToPackage<T>(this ReadOnlySpan<byte> bytes)
+        public static T? ToPackage<T>(this ReadOnlySpan<byte> bytes)
         {
             return MemoryPackSerializer.Deserialize<T>(bytes);
         }

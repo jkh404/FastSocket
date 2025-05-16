@@ -23,11 +23,38 @@ client.Connect("localhost",9090);
 string msg;
 while (!string.IsNullOrEmpty(msg = Console.ReadLine()))
 {
-    client.Send(msg);
+    
+    client.SendPackge(new TestData()
+    {
+        Id=1,Name="小明"
+    });
 }
 return;
+[MemoryPack.MemoryPackable]
+partial record class TestData
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+//FastTcpClient client = new FastTcpClient();
+//client.OnReceive = (self, dataType, data) =>//接收到数据
+//{
+//    if (dataType == PackageDataType.String)
+//    {
+//        var msg = Encoding.UTF8.GetString(data);
+//        Console.WriteLine($"[S:{msg}]");
+//    }
 
+//};
+//client.OnConnected = () => Console.WriteLine("[连接成功]");
+//client.Connect("localhost", 9090);
+//string msg;
+//while (!string.IsNullOrEmpty(msg = Console.ReadLine()))
+//{
 
+//    client.Send(msg);
+//}
+//return;
 
 //SingleThreadTimer threadTimer = new SingleThreadTimer((state) =>
 //{
@@ -37,50 +64,51 @@ return;
 //Console.ReadLine();
 //threadTimer.Stop();
 //return;
-FastTcpClient fastTcpClient = new FastTcpClient();
 
-fastTcpClient.OnReceive=(IBaseTcpClient self, PackageDataType dataType, ReadOnlySpan<byte> dataPacketData) =>
-{
-    if (dataType==PackageDataType.ChunkDataHead)
-    {
-        var head = dataPacketData.ToChunkDataHead();
-        if (head!=null)
-        {
-            self.AwaitChunk(head, initAction: (chunkData) => {
-                chunkData.SetStream(File.OpenWrite($"./{head.Name}"));
-                Console.WriteLine($"开始接收 {head.Name}");
-            }, appendAction: (result) =>
-            {
-                Console.WriteLine($"接收到字节：{result.ThisTimeReceivedByte},剩余字节：{result.WaitReceivedByte}");
-            }, completedAction: (stream) =>
-            {
-                Console.WriteLine($"{head.Name} 接收完毕");
-            });
-        }
-    }
-    else if (dataType==PackageDataType.ChunkDataBody)
-    {
-        var body = dataPacketData.ToChunkDataBody();
-        self.AppendChunk(body);
-    }
-};
-fastTcpClient.OnServerStop=(IBaseTcpClient self, PackageDataType dataType, ReadOnlySpan<byte> dataPacketData) =>
-{
-    self.ClearChunk();
-};
-fastTcpClient.Connect("127.0.0.1", 9090);
-if (fastTcpClient.Connected)
-{
-    //const string fileName = "test.png";
-    //using Stream stream=File.OpenRead($"./{fileName}");
-    //for (int i = 0; i < 1000000; i++)
-    //{
-    //    stream.Seek(0, SeekOrigin.Begin);
-    //    fastTcpClient.SendChunk(stream, fileName, oneChunkSize: 1024);
-    //}
+//FastTcpClient fastTcpClient = new FastTcpClient();
+
+//fastTcpClient.OnReceive=(IBaseTcpClient self, PackageDataType dataType, ReadOnlySpan<byte> dataPacketData) =>
+//{
+//    if (dataType==PackageDataType.ChunkDataHead)
+//    {
+//        var head = dataPacketData.ToChunkDataHead();
+//        if (head!=null)
+//        {
+//            self.AwaitChunk(head, initAction: (chunkData) => {
+//                chunkData.SetStream(File.OpenWrite($"./{head.Name}"));
+//                Console.WriteLine($"开始接收 {head.Name}");
+//            }, appendAction: (result) =>
+//            {
+//                Console.WriteLine($"接收到字节：{result.ThisTimeReceivedByte},剩余字节：{result.WaitReceivedByte}");
+//            }, completedAction: (stream) =>
+//            {
+//                Console.WriteLine($"{head.Name} 接收完毕");
+//            });
+//        }
+//    }
+//    else if (dataType==PackageDataType.ChunkDataBody)
+//    {
+//        var body = dataPacketData.ToChunkDataBody();
+//        self.AppendChunk(body);
+//    }
+//};
+//fastTcpClient.OnServerStop=(IBaseTcpClient self, PackageDataType dataType, ReadOnlySpan<byte> dataPacketData) =>
+//{
+//    self.ClearChunk();
+//};
+//fastTcpClient.Connect("127.0.0.1", 9090);
+//if (fastTcpClient.Connected)
+//{
+//    //const string fileName = "test.png";
+//    //using Stream stream=File.OpenRead($"./{fileName}");
+//    //for (int i = 0; i < 1000000; i++)
+//    //{
+//    //    stream.Seek(0, SeekOrigin.Begin);
+//    //    fastTcpClient.SendChunk(stream, fileName, oneChunkSize: 1024);
+//    //}
     
-}
-fastTcpClient.WaitStop();
+//}
+//fastTcpClient.WaitStop();
 
 
 

@@ -13,10 +13,12 @@ server.OnTcpClientEnter=(channel) =>
     Console.WriteLine("[客户端进入]");
     channel.OnReceive=(self, dataType, data) =>
     {
-        if (dataType==PackageDataType.String)
+        
+        if (dataType==PackageDataType.PackageBody)
         {
-            var msg = Encoding.UTF8.GetString(data);
-            Console.WriteLine(value: $"[C:{msg}]");
+            var pack = MemoryPackSerializer.Deserialize<PackageBody>(data);
+            var testData= pack?.ToObj<TestData>();
+            Console.WriteLine(testData);
         }
     };
 
@@ -26,11 +28,45 @@ server.Start();
 string msg;
 while (!string.IsNullOrEmpty(msg = Console.ReadLine()))
 {
+    
     server.Send(msg);
 
 }
 server.Stop();
 return;
+
+[MemoryPack.MemoryPackable]
+partial record  class  TestData
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+//FastTcpServer server = new FastTcpServer(new IPEndPoint(IPAddress.Loopback, 9090));
+//server.OnTcpClientEnter=(channel) =>
+//{
+//    Console.WriteLine("[客户端进入]");
+//    channel.OnReceive=(self, dataType, data) =>
+//    {
+
+//        if (dataType==PackageDataType.String)
+//        {
+//            var msg = Encoding.UTF8.GetString(data);
+//            Console.WriteLine(value: $"[C:{msg}]");
+//        }
+//    };
+
+//    channel.StartReceive();
+//};
+//server.Start();
+//string msg;
+//while (!string.IsNullOrEmpty(msg = Console.ReadLine()))
+//{
+
+//    server.Send(msg);
+
+//}
+//server.Stop();
+//return;
 
 
 
@@ -99,71 +135,71 @@ return;
 
 
 /********************************测速代码***********************************************************/
-ConcurrentBag<double> byteLengths = new ConcurrentBag<double>();
-StringBuilder stringBuilder = new StringBuilder();
-for (int i = 0; i < 1 * 1024; i++)
-{
-    stringBuilder.Append($"{i % 10}");
-}
-string msgText = stringBuilder.ToString();
-byte[] msgData = Encoding.UTF8.GetBytes(msgText);
+//ConcurrentBag<double> byteLengths = new ConcurrentBag<double>();
+//StringBuilder stringBuilder = new StringBuilder();
+//for (int i = 0; i < 1 * 1024; i++)
+//{
+//    stringBuilder.Append($"{i % 10}");
+//}
+//string msgText = stringBuilder.ToString();
+//byte[] msgData = Encoding.UTF8.GetBytes(msgText);
 
-FastTcpServer fastTcpServer = new FastTcpServer(new System.Net.IPEndPoint(System.Net.IPAddress.Any, 9090));
-fastTcpServer.OnTcpClientEnter = (ITcpChannel client) =>
-{
-    
-    client.StartReceive(asyncReceive: false);
-    Console.WriteLine($"客户端进入:{client.ChannelFlag}");
-    
-};
-fastTcpServer.OnTcpClientLeave = (IBaseTcpChannel client, PackageDataType dataType, ReadOnlySpan<byte> data) =>
-{
-    Console.WriteLine($"客户端离开:{client.ChannelFlag}");
-};
-fastTcpServer.OnServerReceive = (IBaseTcpChannel client, PackageDataType dataType, ReadOnlySpan<byte> data) =>
-{
-    if (dataType == PackageDataType.PackageBody)
-    {
-        var text = MemoryPackSerializer.Deserialize<PackageBody>(data).ToObj<string>();
-        byteLengths.Add((text?.Length ?? 0) * 2 / 1024);
-    }
-    //byteLengths.Add(data.Length/1024);
-    //Console.WriteLine($"客户端离开:{client.ChannelFlag}");
-};
-fastTcpServer.Start(asyncReceive: true);
-#pragma warning disable CS4014 // 由于此调用不会等待，因此在调用完成前将继续执行当前方法
-Task.Run(async () =>
-{
+//FastTcpServer fastTcpServer = new FastTcpServer(new System.Net.IPEndPoint(System.Net.IPAddress.Any, 9090));
+//fastTcpServer.OnTcpClientEnter = (ITcpChannel client) =>
+//{
 
-    while (true)
-    {
-        await fastTcpServer.SendAsync(msgData, 0, msgData.Length);
-        Thread.Sleep(100);
-    }
-});
-#pragma warning restore CS4014 // 由于此调用不会等待，因此在调用完成前将继续执行当前方法
+//    client.StartReceive(asyncReceive: false);
+//    Console.WriteLine($"客户端进入:{client.ChannelFlag}");
 
-#pragma warning disable CS4014 // 由于此调用不会等待，因此在调用完成前将继续执行当前方法
-Task.Run(() =>
-{
-    DateTime dateTime = DateTime.Now;
-    while (true)
-    {
-        while ((DateTime.Now - dateTime).TotalMilliseconds < 990)
-        {
-            Thread.Sleep(100);
-        }
-        var speed = byteLengths.Sum() / 1204 / (DateTime.Now - dateTime).TotalSeconds;
-        byteLengths.Clear();
-        dateTime = DateTime.Now;
-        Console.WriteLine($"速度：{speed:N2} MB/s");
-    }
-});
-#pragma warning restore CS4014 // 由于此调用不会等待，因此在调用完成前将继续执行当前方法
+//};
+//fastTcpServer.OnTcpClientLeave = (IBaseTcpChannel client, PackageDataType dataType, ReadOnlySpan<byte> data) =>
+//{
+//    Console.WriteLine($"客户端离开:{client.ChannelFlag}");
+//};
+//fastTcpServer.OnServerReceive = (IBaseTcpChannel client, PackageDataType dataType, ReadOnlySpan<byte> data) =>
+//{
+//    if (dataType == PackageDataType.PackageBody)
+//    {
+//        var text = MemoryPackSerializer.Deserialize<PackageBody>(data).ToObj<string>();
+//        byteLengths.Add((text?.Length ?? 0) * 2 / 1024);
+//    }
+//    //byteLengths.Add(data.Length/1024);
+//    //Console.WriteLine($"客户端离开:{client.ChannelFlag}");
+//};
+//fastTcpServer.Start(asyncReceive: true);
+//#pragma warning disable CS4014 // 由于此调用不会等待，因此在调用完成前将继续执行当前方法
+//Task.Run(async () =>
+//{
+
+//    while (true)
+//    {
+//        await fastTcpServer.SendAsync(msgData, 0, msgData.Length);
+//        Thread.Sleep(100);
+//    }
+//});
+//#pragma warning restore CS4014 // 由于此调用不会等待，因此在调用完成前将继续执行当前方法
+
+//#pragma warning disable CS4014 // 由于此调用不会等待，因此在调用完成前将继续执行当前方法
+//Task.Run(() =>
+//{
+//    DateTime dateTime = DateTime.Now;
+//    while (true)
+//    {
+//        while ((DateTime.Now - dateTime).TotalMilliseconds < 990)
+//        {
+//            Thread.Sleep(100);
+//        }
+//        var speed = byteLengths.Sum() / 1204 / (DateTime.Now - dateTime).TotalSeconds;
+//        byteLengths.Clear();
+//        dateTime = DateTime.Now;
+//        Console.WriteLine($"速度：{speed:N2} MB/s");
+//    }
+//});
+//#pragma warning restore CS4014 // 由于此调用不会等待，因此在调用完成前将继续执行当前方法
 
 
-Console.ReadLine();
-fastTcpServer.Stop();
+//Console.ReadLine();
+//fastTcpServer.Stop();
 /*******************************************************************************************/
 
 
